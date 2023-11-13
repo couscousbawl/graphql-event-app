@@ -3,10 +3,9 @@ import bodyParser from 'body-parser';
 import { graphqlHTTP } from 'express-graphql';
 import { buildSchema } from 'graphql';
 import mongoose from 'mongoose';
+import Event from './models/events.js';
 
 const app = express();
-
-const events = [];
 
 app.use(bodyParser.json());
 
@@ -42,15 +41,23 @@ app.use(
       events: () => {
         return events;
       },
-      createEvent: (args) => {
-        const event = {
-            _id: Math.random().toString(),
+      createEvent: (args) => { 
+        const event = new Event({
             title: args.eventInput.title,
             description: args.eventInput.description,
             price: +args.eventInput.price,
-            date: args.eventInput.date
-        };
-        events.push(event);
+            date: new Date(args.eventInput.date)
+        });
+        event
+          .save()
+          .then((result) => {
+            console.log(result);
+            return {...result._doc}
+          })
+          .catch((err) => {
+            console.log(err);
+            throw err;
+          });
         return event;
       },
     },
@@ -60,10 +67,11 @@ app.use(
 
 mongoose
   .connect(
-    `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.2xn3e3v.mongodb.net/?retryWrites=true&w=majority`
+    `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.2xn3e3v.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`
   )
   .then(() => {
     app.listen(3000);
+    console.log('app listening at: 3000')
   })
   .catch((err) => {
     console.log(err);

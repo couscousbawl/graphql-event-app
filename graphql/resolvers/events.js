@@ -13,19 +13,22 @@ export default {
       throw err;
     }
   },
-  createEvent: async (args) => {
+  createEvent: async (args, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthorized operation');
+    }
     const event = new Event({
       title: args.eventInput.title,
       description: args.eventInput.description,
       price: +args.eventInput.price,
       date: new Date(args.eventInput.date),
-      created_by: "655223de9c1fd48a0e636961",
+      created_by: req.userId,
     });
     let createdEvent;
     try {
       const result = await event.save();
       createdEvent = populateEvent(result);
-      const created_by = await User.findById("655223de9c1fd48a0e636961");
+      const created_by = await User.findById(req.userId);
       if (!created_by) {
         throw new Error("User not found!");
       }

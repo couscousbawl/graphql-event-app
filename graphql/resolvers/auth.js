@@ -1,13 +1,13 @@
 import bcrypt from 'bcryptjs';
 import User from '../../models/user.js';
-import { transformUser } from './merge.js';
+import { populateUser } from './merge.js';
 
 export default {
   users: async () => {
     try {
       const users = await User.find();
       return users.map((user) => {
-        return transformUser(user);
+        return populateUser(user);
       });
     } catch (err) {
       throw err;

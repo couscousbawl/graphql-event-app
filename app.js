@@ -3,7 +3,7 @@ import bodyParser from 'body-parser';
 import { graphqlHTTP } from 'express-graphql';
 import mongoose from 'mongoose';
 import graphQLSchema from './graphql/schema/index.js';
-import graphQLResolvers from './graphql/resolvers/index.js';
+import graphQLResolvers from './graphql/resolvers/resolver.js';
 
 
 const app = express();

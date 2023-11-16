@@ -1,12 +1,12 @@
 import Booking from '../../models/booking.js';
-import { transformBooking, transformEvent } from './merge.js';
+import { populateBooking, populateEvent } from './merge.js';
 
 export default {
   bookings: async () => {
     try {
       const bookings = await Booking.find();
       return bookings.map(booking => {
-        return transformBooking(booking);
+        return populateBooking(booking);
       });
     } catch (err) {
       throw err
@@ -20,7 +20,7 @@ export default {
     });
     try {
       const result = await booking.save();
-      return transformBooking(result);
+      return populateBooking(result);
     } catch (err) {
       throw err;
     }
@@ -28,7 +28,7 @@ export default {
   cancelBooking: async args => {
     try {
       const booking = await Booking.findById(args.bookingId).populate('event');
-      const event = transformEvent(booking.event);
+      const event = populateEvent(booking.event);
       await Booking.deleteOne({ _id: args.bookingId });
       return event;
     } catch (err) {

@@ -1,12 +1,13 @@
 import Event from "../../models/event.js";
-import { transformEvent } from "./merge.js";
+import User from "../../models/user.js";
+import { populateEvent } from "./merge.js";
 
 export default {
   events: async () => {
     try {
       const events = await Event.find();
       return events.map((event) => {
-        return transformEvent(event);
+        return populateEvent(event);
       });
     } catch (err) {
       throw err;
@@ -23,7 +24,7 @@ export default {
     let createdEvent;
     try {
       const result = await event.save();
-      createdEvent = transformEvent(result);
+      createdEvent = populateEvent(result);
       const created_by = await User.findById("655223de9c1fd48a0e636961");
       if (!created_by) {
         throw new Error("User not found!");

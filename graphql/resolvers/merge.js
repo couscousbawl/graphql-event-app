@@ -2,16 +2,16 @@ import Event from "../../models/event.js";
 import User from '../../models/user.js';
 import { dateToString } from "../../helpers/date.js";
 
-export const transformEvent = (event) => {
+export const populateEvent = (event) => {
   return {
     ...event._doc,
     _id: event.id,
     date: dateToString(event._doc.date),
-    created_by: user.bind(this, event.created_by),
+    created_by: user.bind(this, event._doc.created_by),
   };
 };
 
-export const transformUser = (user) => {
+export const populateUser = (user) => {
     return {
         ...user._doc,
         _id: user.id,
@@ -19,7 +19,7 @@ export const transformUser = (user) => {
       };
   };
 
-export const transformBooking = (booking) => {
+export const populateBooking = (booking) => {
   return {
     ...booking._doc,
     user: user.bind(this, booking._doc.user),
@@ -33,7 +33,7 @@ const events = async (eventIds) => {
   try {
     const events = await Event.find({ _id: { $in: eventIds } });
     return events.map((event) => {
-      return transformEvent(event);
+      return populateEvent(event);
     });
   } catch (err) {
     throw err;
@@ -56,7 +56,7 @@ const user = async (userId) => {
 const singleEvent = async (eventId) => {
   try {
     const event = await Event.findById(eventId);
-    return transformEvent(event);
+    return populateEvent(event);
   } catch (err) {
     throw err;
   }

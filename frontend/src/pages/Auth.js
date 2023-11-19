@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import AuthConetext from '../context/auth-context';
 
 import "./auth.css";
 
@@ -6,6 +7,8 @@ class AuthPage extends Component {
   state = {
     isLogin: true,
   };
+
+  static contextType = AuthConetext;
 
   constructor(props) {
     super(props);
@@ -60,14 +63,20 @@ class AuthPage extends Component {
         "Content-Type": "application/json",
       },
     })
-      .then((res) => {
+      .then(res => {
         if (res.status !== 200 && res.status !== 200) {
           throw new Error("Failed");
         }
-        return res.json;
+        return res.json();
       })
-      .then((resData) => {
-        console.log(resData);
+      .then(resData => {
+        if (resData.data.login.token){
+            this.context.login(
+                resData.data.login.token,
+                resData.data.login.userId,
+                resData.data.login.tokenExpiration
+                );
+        }
       })
       .catch((err) => {
         console.log(err);

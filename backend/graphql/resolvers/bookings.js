@@ -8,7 +8,7 @@ export default {
       throw new Error('Unauthorized operation');
     }
     try {
-      const bookings = await Booking.find();
+      const bookings = await Booking.find({user: req.userId});
       return bookings.map(booking => {
         return populateBooking(booking);
       });
